@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="ArduinoFX:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/ArduinoFX_jar</output-path>
+    <root id="archive" name="ArduinoFX.jar">
+      <element id="module-output" name="ArduinoFX" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/src/Assets/jSerialComm-2.6.0.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
