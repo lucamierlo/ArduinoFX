@@ -28,7 +28,7 @@ public class ArduinoFXController
     String alercontext = "unknown";
     ObservableList luca = FXCollections.observableArrayList();
 
-
+    //test push
 
     /*
     Connect to the arduino
@@ -48,7 +48,7 @@ public class ArduinoFXController
             comPort = SerialPort.getCommPort("COM3");
             SerialPort serials[] = SerialPort.getCommPorts();
             for (SerialPort serial : serials) { luca.add(serial.getPortDescription()+" "+serial.getDescriptivePortName()); }
-     LV_comports.setItems(luca);
+            LV_comports.setItems(luca);
             //            System.out.println(comPort);
             comPort.setBaudRate(baudRate);
             connection = true;
