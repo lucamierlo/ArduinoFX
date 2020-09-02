@@ -11,50 +11,81 @@ import java.io.PrintWriter;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
-public class ArduinoFXController
-{
+public class ArduinoFXController {
     public Label LBLstate;
     public Button BTNcnct;
     public Button BTNdiscnt;
     public ColorPicker CLR1;
     public Label LBLtime;
-    public ListView LV_comports;
+    public ChoiceBox CH_comports;
     private int baudRate = 9600;
+    public int choice = 0;
     private SerialPort comPort;
     static PrintWriter outPut;
-    Boolean connection = false;
+    int COMchoice = -1;
+    int connection = 0;
     String alertitle = "unknown";
     String alertheader = "unknown";
     String alercontext = "unknown";
     ObservableList luca = FXCollections.observableArrayList();
 
-    //test push
 
     /*
     Connect to the arduino
      */
-    public void initialize()
-    {
-        time();
+    public void initialize() {
+
+            SerialPort serials[] = SerialPort.getCommPorts();
+            for (SerialPort serial : serials) {
+                System.out.println(serials.length +"1212");
+                luca.add(serial.getDescriptivePortName());
+            }
+            luca.add("test2");
+            CH_comports.setItems(luca);
+            time();
+
+
+    }
+
+    public void Clickedchoice() {
+        System.out.println("hoi");
+
+        CH_comports.getSelectionModel().selectedIndexProperty().addListener((observableValue, number,number2) -> {
+            System.out.println(CH_comports.getSelectionModel().getSelectedIndex());
+            COMchoice = CH_comports.getSelectionModel().getSelectedIndex();
+
+        });
+
     }
     public void connect(ActionEvent actionEvent) {
-
+        String comport1 = "";
+        System.out.println(COMchoice + "COMCHOICE");
 
         if (SerialPort.getCommPorts().length <= 0) {
             System.out.println("GEEN VERBINDING");
-            connection = false;
+            connection = 0;
+        }else if (COMchoice == -1)
+        {
+            System.out.println("not selected one");
+            connection = -1;
+
         } else {
             System.out.println("COM POORT GEZIEN");
-            comPort = SerialPort.getCommPort("COM3");
-            SerialPort serials[] = SerialPort.getCommPorts();
-            for (SerialPort serial : serials) { luca.add(serial.getPortDescription()+" "+serial.getDescriptivePortName()); }
-            LV_comports.setItems(luca);
-            //            System.out.println(comPort);
+            Object serial = CH_comports.getSelectionModel().getSelectedItem();
+            for (int i = 0; i <= 256; i++) {
+                if (serial.toString().contains("COM" + i)) {
+                    System.out.println("het is COM" + i);
+                    comport1 = "COM" + i;
+                }
+            }
+            comPort = SerialPort.getCommPort(comport1);
+            System.out.println(serial.toString());
             comPort.setBaudRate(baudRate);
-            connection = true;
+
+            connection = 1;
         }
             //If the port is not closed, open the USB port.4
-            if (connection == true) {
+            if (connection == 1) {
                 try {
                     //Open the USB port and initialize the PrintWriter.
                     comPort.openPort();
@@ -70,20 +101,23 @@ public class ArduinoFXController
                 } catch (Exception c) {
                     System.out.println(c);
                 }
-            } else if (connection == false) {
+            } else if (connection == 0 ) {
                 alertitle = "COM ERROR";
                 alertheader = "Fatal usb error";
                 alercontext = "Arduino niet verbonden met pc. Plug usb opnieuw in pc";
                 alert_error(alertitle, alertheader, alercontext);
             } else {
-
+                alertitle = "COM ERROR";
+                alertheader = "no com port selected";
+                alercontext = "u heeft geen compoort aangeklikt ";
+                alert_error(alertitle, alertheader, alercontext);
             }
         }
 
 
     public void send(int input)
     {
-        if(connection == true)
+        if(connection == 1)
         {
             System.out.println(input);
             outPut.print(input);
