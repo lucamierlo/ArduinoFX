@@ -1,5 +1,5 @@
 <component name="ArtifactManager">
-  <artifact type="jar" build-on-make="true" name="ArduinoFX:jar">
+  <artifact type="jar" name="ArduinoFX:jar">
     <output-path>$PROJECT_DIR$/out/artifacts/ArduinoFX_jar</output-path>
     <root id="archive" name="ArduinoFX.jar">
       <element id="module-output" name="ArduinoFX" />

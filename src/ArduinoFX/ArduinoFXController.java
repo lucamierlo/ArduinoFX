@@ -6,10 +6,12 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.control.*;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 
 import java.io.PrintWriter;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class ArduinoFXController {
     public Label LBLstate;
@@ -18,6 +20,8 @@ public class ArduinoFXController {
     public ColorPicker CLR1;
     public Label LBLtime;
     public ChoiceBox CH_comports;
+    public Button minIcon;
+    public Button s;
     private int baudRate = 9600;
     public int choice = 0;
     private SerialPort comPort;
@@ -34,7 +38,9 @@ public class ArduinoFXController {
     Connect to the arduino
      */
     public void initialize() {
-
+            minIcon.setOnAction(e -> {
+            ((Stage)((Button)e.getSource()).getScene().getWindow()).setIconified(true);
+             });
             SerialPort serials[] = SerialPort.getCommPorts();
             for (SerialPort serial : serials) {
                 System.out.println(serials.length +"1212");
@@ -43,7 +49,9 @@ public class ArduinoFXController {
             luca.add("test2");
             CH_comports.setItems(luca);
             time();
-
+        s.setOnAction(e -> {
+            ((Stage)((Button)e.getSource()).getScene().getWindow()).setIconified(true);
+        });
 
     }
 
@@ -92,12 +100,23 @@ public class ArduinoFXController {
                     if (comPort.isOpen() == true) {
                         System.out.println("Connection to Arduino successful.");
                         LBLstate.setText("Connected");
+                        Thread.sleep(3000);
+                        outPut = new PrintWriter(comPort.getOutputStream());
+                        BTNcnct.setVisible(false);
+                        BTNdiscnt.setVisible(true);
+                        LBLstate.setTextFill(Color.LIMEGREEN);
+                        CH_comports.setVisible(false);
                     }
-                    Thread.sleep(3000);
-                    outPut = new PrintWriter(comPort.getOutputStream());
-                    BTNcnct.setVisible(false);
-                    BTNdiscnt.setVisible(true);
-                    LBLstate.setTextFill(Color.LIMEGREEN);
+                    else{
+                        connection = 0;
+                        comPort.closePort();
+                        System.out.println("mislukt");
+                        alertitle = "COM ERROR";
+                        alertheader = "Can't connect to arduino";
+                        alercontext = "arduino can niet verbinden met programma zorg ervoor dat u de goeie com poort aanklikt";
+                        alert_error(alertitle, alertheader, alercontext);
+                    }
+
                 } catch (Exception c) {
                     System.out.println(c);
                 }
@@ -144,6 +163,7 @@ public class ArduinoFXController {
             LBLstate.setText("Disconnected");
             BTNcnct.setVisible(true);
             BTNdiscnt.setVisible(false);
+            CH_comports.setVisible(true);
         }
 
     }
@@ -153,7 +173,46 @@ public class ArduinoFXController {
     public void redwhiteblue(ActionEvent actionEvent) { send(4); }
     public void party(ActionEvent actionEvent) { send(5); }
     public void purplegreen(ActionEvent actionEvent) { send(6); }
-    public void randomcolors(ActionEvent actionEvent) { send(7); }
+    public void randomcolors(ActionEvent actionEvent) {
+        int randomNum = ThreadLocalRandom.current().nextInt(1, 7 );
+        switch(randomNum)
+        {
+            case 1:
+            {
+                send(1);
+            break;
+            }
+            case 2:
+            {
+                send(2);
+                break;
+            }
+            case 3:
+            {
+                send(3);
+                break;
+            }
+            case 4:
+            {
+                send(4);
+                break;
+            }
+            case 5:
+            {
+                send(5);
+                break; }
+            case 6:
+            {
+                send(6);
+                break;
+            }
+
+        }
+        System.out.println(randomNum);
+
+
+         }
+
 //    public void menuWhite(ActionEvent actionEvent) {send(8); }
 //    public void MenuGreen(ActionEvent actionEvent) {send(9); }
 //    public void MenuBlue(ActionEvent actionEvent) {send(10); }
@@ -165,7 +224,7 @@ public class ArduinoFXController {
         LocalTime time = LocalTime.now(); // Gets the current time
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
         String time1 = formatter.format(time);
-        LBLtime.setText(time1);
+
     }
 
     public void alert_error(String title, String header, String context)
@@ -176,6 +235,14 @@ public class ArduinoFXController {
         alert.setContentText(context);
         alert.showAndWait();
     }
+
+public void close()
+{
+    System.exit(5);
+}
+
+
+
 }
 
 
